@@ -4,6 +4,6 @@ export default {
   entry: "index.js",
   dest: "build.js",
   format: "umd",
-  moduleName: "layout",
+  moduleName: "d3",
   plugins: [resolve()]
 };

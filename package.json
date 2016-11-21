@@ -6,8 +6,7 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "devDependencies": {
     "d3": "^1.29.5",
     "rollup": "^0.36.1",
@@ -17,6 +16,6 @@
   "author": "H-Plus-Time",
   "license": "MIT",
   "dependencies": {
-    "d3": "^1.29.5"
+    "d3": "^4.3.0"
   }
 }
