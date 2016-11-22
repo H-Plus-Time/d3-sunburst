@@ -50,6 +50,12 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
         return (Math.min(this.width, this.height) / 2) - 10;
       },
 
+      clickHandler(e) {
+        this.dispatchEvent(new CustomEvent('d3-data-selected', {bubbles: true,
+          detail: e
+        }))
+      },
+
       construct() {
         var color = d3.scaleOrdinal(d3.schemeCategory20c);
         formatNumber = d3.format(",d");
@@ -94,6 +100,7 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
         .style("fill", function(d) { return color((d.children ? d : d.parent).data.name); })
         .on("mouseover", mouseover)
         .on("mouseleave", mouseleave)
+        .on('click', this.clickHandler)
 
         d3.select(self.frameElement).style("height", this.height + "px");
       }
