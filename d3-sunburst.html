@@ -33,7 +33,7 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
         if(node.parent) {
           return [node].concat(d3SunburstUtils.getAncestors(node.parent))
         }
-        return node;
+        return [node];
       }
     }
   </script>
@@ -78,7 +78,6 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
         }
 
         mouseover = function(e) {
-          console.log(e);
           ancestors = d3SunburstUtils.getAncestors(e);
           svg.selectAll("path")
             .style("opacity", 0.3);
