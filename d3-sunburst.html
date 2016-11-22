@@ -57,7 +57,7 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
       },
 
       attached() {
-        this.svg = d3.select(".container").append("svg")
+        this.svg = d3.select(this.$$('.container')).append("svg")
             .attr("width", this.width)
             .attr("height", this.height)
             .append("g")
