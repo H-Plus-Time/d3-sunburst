@@ -77,6 +77,13 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
           type: Object,
           observer: 'construct'
         },
+        colors: {
+          type: Array,
+          value: function() {
+            return d3.schemeCategory20c
+          },
+          observer: 'construct'
+        },
         selectedData: {
           type: Object,
           notify: true,
@@ -109,7 +116,10 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
       },
 
       construct() {
-        var color = d3.scaleOrdinal(d3.schemeCategory20c);
+        if(!this.data) {
+          return
+        }
+        var color = d3.scaleOrdinal(this.colors);
         formatNumber = d3.format(",d");
         var partition = d3.partition();
         x = d3.scaleLinear().range([0, 2 * Math.PI]);
