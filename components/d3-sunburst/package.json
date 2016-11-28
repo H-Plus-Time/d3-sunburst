@@ -1,0 +1,23 @@
+{
+  "name": "d3-sunburst",
+  "version": "1.0.0",
+  "description": "Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rollup -c && uglifyjs build.js -c warnings=false -m -o build.min.js"
+  },
+  "devDependencies": {
+    "bower": "*",
+    "rollup": "^0.36.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "uglify-js": "^2.7.4"
+  },
+  "author": "H-Plus-Time",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^4.3.0"
+  }
+}

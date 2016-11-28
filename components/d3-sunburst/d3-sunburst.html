@@ -1,0 +1,168 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="../underscore/underscore-min.js"></script>
+<script src="build.min.js"></script>
+<!--
+`d3-sunburst`
+Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
+
+@demo demo/index.html
+-->
+
+<dom-module id="d3-sunburst">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex:1 1 auto;
+      }
+      .container {
+        position:relative;
+      }
+      .explanation {
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+      }
+      /*
+        accounts for svg inline-block height weirdness
+      */
+      svg {
+        display:block;
+      }
+    </style>
+    <div class="container">
+      <div class="explanation">
+        <slot>
+          <div>
+            <h2 style="text-align:center">[[selectedData.percentage]]%</h2>
+            <div>[[selectedData.count]] / [[selectedData.total]]</div>
+          </div>
+        </slot>
+      </div>
+      <svg
+        height$="[[height]]" width$="[[width]]"
+        on-d3-data-hovered="_debouncedComputeSelectedData">
+      </svg>
+    </div>
+  </template>
+  <script>
+    d3SunburstUtils = {
+      getAncestors(node) {
+        if(node.parent) {
+          return [node].concat(d3SunburstUtils.getAncestors(node.parent))
+        }
+        return [node];
+      },
+      sumLeaves(node) {
+        if(node.children) {
+          return node.children.map((child) => d3SunburstUtils.sumLeaves(child))
+                              .reduce((a,b) => a + b);
+        }
+        return node.size;
+      }
+    }
+  </script>
+  <script>
+    Polymer({
+
+      is: 'd3-sunburst',
+
+      properties: {
+        radius: {
+          type: Number,
+          computed: '_computeRadius(width, height)'
+        },
+        data: {
+          type: Object,
+          observer: 'construct'
+        },
+        colors: {
+          type: Array,
+          value: function() {
+            return d3.schemeCategory20c
+          },
+          observer: 'construct'
+        },
+        selectedData: {
+          type: Object,
+          notify: true,
+          value: _ => ({percentage: 0, total: 1, count: 0})
+        }
+      },
+
+      _computeSelectedData(e) {
+        var percentage = +(100 * e.detail / this.selectedData.total).toFixed(2);
+        this.set('selectedData.percentage', percentage);
+        this.set('selectedData.count', e.detail);
+      },
+
+      _computeRadius(width, height) {
+        return (Math.min(this.width, this.height) / 2) - 10;
+      },
+
+      clickHandler(e) {
+        this.dispatchEvent(new CustomEvent('d3-data-selected', {bubbles: true,
+          detail: e
+        }))
+      },
+
+      attached() {
+        this._debouncedComputeSelectedData = _.debounce(this._computeSelectedData, 25);
+        var svg = d3.select(this.$$('.container > svg'));
+        svg.select('g').remove();
+        svg.append('g')
+          .attr("transform", "translate(" + this.width / 2 + "," + (this.height / 2) + ")");
+      },
+
+      construct() {
+        if(!this.data) {
+          return
+        }
+        var color = d3.scaleOrdinal(this.colors);
+        formatNumber = d3.format(",d");
+        var partition = d3.partition();
+        x = d3.scaleLinear().range([0, 2 * Math.PI]);
+        y = d3.scaleSqrt().range([0, this.radius]);
+
+        var arc = d3.arc()
+            .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x0))); })
+            .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x1))); })
+            .innerRadius(function(d) { return Math.max(0, y(d.y0)); })
+            .outerRadius(function(d) { return Math.max(0, y(d.y1)); });
+
+
+        var svg = d3.select(this.$$('.container > svg > g'));
+        mouseleave = function(e) {
+          svg.selectAll("path")
+            .style("opacity", 1);
+        }
+
+        mouseover = function(e) {
+          this.dispatchEvent(new CustomEvent('d3-data-hovered', {detail: e.value, bubbles: true}));
+          ancestors = d3SunburstUtils.getAncestors(e);
+          svg.selectAll("path")
+            .style("opacity", 0.3);
+          svg.selectAll("path")
+            .filter((path) => ancestors.indexOf(path) != -1)
+            .style("opacity", 1)
+        }
+        this.set('selectedData.total', d3SunburstUtils.sumLeaves(this.data));
+        root = d3.hierarchy(this.data);
+        root.sum(function(d) { return d.size; });
+        var nodes = partition(root).descendants();
+
+        svg.selectAll("path")
+        .data(nodes)
+        .enter().append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color((d.children ? d : d.parent).data.name); })
+        .on("mouseover", mouseover)
+        .on("mouseleave", mouseleave)
+        .on('click', this.clickHandler)
+
+      }
+
+    });
+  </script>
+</dom-module>
