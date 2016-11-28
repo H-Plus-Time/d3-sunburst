@@ -12,24 +12,54 @@
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../d3-sunburst.html">
     <link rel="import" href="../../iron-ajax/iron-ajax.html">
+    <link rel="import" href="../../paper-material/paper-material.html">
     <style is="custom-style" include="demo-pages-shared-styles">
-      iframe {
-        height: 100% !important;
+      d3-sunburst h2 {
+        text-align:center;
+      }
+      body > div {
+        display:flex;
+        width:100%;
+        flex-direction:row;
+      }
+      body > div > demo-snippet {
+        flex: 1;
       }
     </style>
   </head>
   <body>
     <div>
-      <h3>Basic d3-sunburst demo</h3>
 
       <demo-snippet>
+        <h3>Basic d3-sunburst demo</h3>
         <template is="dom-bind">
           <iron-ajax auto
             url="../example.json"
             handle-as="json"
             last-response="{{data}}">
           </iron-ajax>
-          <d3-sunburst width="600" height="600" data="[[data]]"></d3-sunburst>
+          <div>
+            <d3-sunburst width="500" height="500" data="[[data]]">
+            </d3-sunburst>
+          </div>
+        </template>
+      </demo-snippet>
+      <demo-snippet>
+        <h3>Custom percentage indicator demo</h3>
+        <template is="dom-bind">
+          <iron-ajax auto
+            url="../example.json"
+            handle-as="json"
+            last-response="{{data}}">
+          </iron-ajax>
+          <div>
+            <d3-sunburst width="500" height="500" data="[[data]]" selected-data="{{selectedData}}">
+              <div style="color:white;border:solid 1px black;padding:10px">
+                <h2>[[selectedData.percentage]]%</h2>
+                <div>[[selectedData.count]] / [[selectedData.total]]</div>
+              </div>
+            </d3-sunburst>
+          </div>
         </template>
       </demo-snippet>
     </div>
