@@ -13,6 +13,7 @@ build:
 deploy:
   steps:
     - motemen/polymer-element-build-docs
+    - H-Plus-Time/polymer-element-copy-media
     - lukevivier/gh-pages@0.2.1:
         token: $GITHUB_TOKEN
         basedir: docs
