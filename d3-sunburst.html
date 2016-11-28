@@ -12,6 +12,7 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
     <style>
       :host {
         display: block;
+        height:600px;
         /*height:600px;*/
         /*width:600px;*/
       }
@@ -109,7 +110,6 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
         .on("mouseleave", mouseleave)
         .on('click', this.clickHandler)
 
-        d3.select(self.frameElement).style("height", this.height + "px");
       }
 
     });
