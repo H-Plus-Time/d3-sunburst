@@ -147,7 +147,6 @@ Polymer wrapped implementation of a standard sunburst diagram (nested pie chart)
             .filter((path) => ancestors.indexOf(path) != -1)
             .style("opacity", 1)
         }
-        this.total = d3SunburstUtils.sumLeaves(this.data);
         this.set('selectedData.total', d3SunburstUtils.sumLeaves(this.data));
         root = d3.hierarchy(this.data);
         root.sum(function(d) { return d.size; });
