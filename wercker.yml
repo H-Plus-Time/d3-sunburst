@@ -13,7 +13,11 @@ build:
 deploy:
   steps:
     - motemen/polymer-element-build-docs
-    - H-Plus-Time/polymer-element-copy-media
+    - script:
+        name: copy media resources
+        code: |
+          cp -R images docs
+          cp images/favicon.ico docs
     - lukevivier/gh-pages@0.2.1:
         token: $GITHUB_TOKEN
         basedir: docs
